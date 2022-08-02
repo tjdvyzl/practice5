@@ -2,6 +2,7 @@ import React, {useState} from 'react'
 import { Typography, Button, Form, message, Input, Icon } from 'antd';
 import Dropzone from 'react-dropzone';
 import Item from 'antd/lib/list/Item';
+import axios from "axios";
 const { Title } = Typography;
 const { TextArea } = Input;
 
@@ -39,19 +40,43 @@ function VideoUploadPage() {
         setCategory(e.currentTarget.value);
     }
 
+    const onDrop = (files) => {
+        let formData = new FormData;
+        const config = {
+            header: {'content-type': 'multipart/form-data'}
+        }
+        formData.append('file', files[0]);
+
+        //이걸 한 이유
+        // 우리가 서버에다가 request를 보내는데 이때 axios를 사용한다.(jquery나 이런거 쓸땐 AJAX)
+        // axois.post()할때 위의 코드들을 보내주지 않으면 파일을 보낼때 오류가 생긴다.
+        //그래서 헤더에 콘텐트 타입을 해줘야한다.
+
+        axios.post('/api/video/uploadfiles', formData, config)
+            .then(response => {
+                if (response.data.success) {
+                    
+                } else {
+                    alert('비디오 업로드 실패')
+                }
+            })
+    }
+
   return (
       <div style={{maxWidth:'700px', margin:'2rem auto'}}>
           <div style={{textAlign:'center', marginBottom:'2rem'}}>
               <Title level={2}>Upload Video</Title>
           </div>
-          <Form onSubmit>
+          <Form >
               <div style={{display:'flex', justifyContent:'space-between'}}>
                 {/* Drop zone */}
 
                   <Dropzone
-                    onDrop
-                    multiple
-                    maxsize
+                    onDrop={onDrop}
+                    // multiple은 한번에 파일을 많이 올릴건지 false면 하나
+                      multiple={false}
+                    //maxsize 조정
+                    maxsize={100000000}
                   >
                       {({ getRootProps, getInputProps }) => (
                           <div style={{
@@ -68,7 +93,7 @@ function VideoUploadPage() {
                   
                   {/* Thumnail  */}
                   <div>
-                      <img src alt/>
+                      {/* <img src alt/> */}
                   </div>
               </div>
 
@@ -112,7 +137,7 @@ function VideoUploadPage() {
               <br />
               <br />
 
-              <Button type="primary" size="large" onClick>
+              <Button type="primary" size="large" >
                   Submit
               </Button>
           </Form>
