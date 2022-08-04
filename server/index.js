@@ -14,6 +14,14 @@ const config = require("./config/key");
 //   .then(() => console.log("DB connected"))
 //   .catch(err => console.error(err));
 
+/*
+  rdbms       mongodb
+  database -> database
+  tables -> collections
+  rows -> documents
+  columns -> fields
+*/
+
 const mongoose = require("mongoose");
 const connect = mongoose.connect(config.mongoURI,
   {

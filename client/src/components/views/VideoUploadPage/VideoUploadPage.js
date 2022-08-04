@@ -3,6 +3,7 @@ import { Typography, Button, Form, message, Input, Icon } from 'antd';
 import Dropzone from 'react-dropzone';
 import Item from 'antd/lib/list/Item';
 import axios from "axios";
+import { useSelector } from 'react-redux';
 const { Title } = Typography;
 const { TextArea } = Input;
 
@@ -18,11 +19,20 @@ const CategoryOptions = [
     { value: 3, label: "Pets & Animals" }
 ]
 
-function VideoUploadPage() {
+function VideoUploadPage(props) {
     const [VideoTitle, setVideoTitle] = useState("");
     const [Description, setDescription] = useState("");
     const [Private, setPrivate] = useState(0);
+    const [FilePath, serFilePath] = useState("");
     const [Category, setCategory] = useState("Film & Animation");
+    const [Duration, setDuration] = useState("");
+
+    /*
+        useSelector는 리덕스에서 정보를 뽑아올 때 사용
+        밑의 코드를 보면 state를 갖고오는데 state에서 state.user를 통해
+        user의 모든 정보들이 user변수에 담겨있게됨.
+    */
+    const user = useSelector(state => state.user);
 
     const onTitleChange = (e) => {
         setVideoTitle(e.currentTarget.value);
@@ -55,9 +65,37 @@ function VideoUploadPage() {
         axios.post('/api/video/uploadfiles', formData, config)
             .then(response => {
                 if (response.data.success) {
-                    
+                    console.log(response);
                 } else {
                     alert('비디오 업로드 실패')
+                }
+            })
+    }
+
+    const onSubmit = (e) => {
+        e.preventDefault();
+
+        let variables = {
+            writer: user.userData._id,
+            title: VideoTitle,
+            description: Description,
+            privacy: Private,
+            filePath: FilePath,
+            category: Category,
+            duration: Duration,
+        }
+
+        axios.post('/api/video/uploadVideo', variables)
+            .then(response => {
+                if(response.data.success){
+                    message.success("upload success");
+
+                    setTimeout(() => {
+                        props.history.push('/');
+                    }, 3000)
+                }
+                else {
+                    alert("video upload fail")
                 }
             })
     }
@@ -67,7 +105,7 @@ function VideoUploadPage() {
           <div style={{textAlign:'center', marginBottom:'2rem'}}>
               <Title level={2}>Upload Video</Title>
           </div>
-          <Form >
+          <Form onSubmit={onSubmit}>
               <div style={{display:'flex', justifyContent:'space-between'}}>
                 {/* Drop zone */}
 
@@ -137,7 +175,7 @@ function VideoUploadPage() {
               <br />
               <br />
 
-              <Button type="primary" size="large" >
+              <Button type="primary" size="large" onClick={onSubmit}>
                   Submit
               </Button>
           </Form>

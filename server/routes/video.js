@@ -4,6 +4,7 @@ const { User } = require("../models/User");
 const path = require('path');
 const { auth } = require("../middleware/auth");
 const multer = require("multer");
+const { Video } = require("../models/Video");
 
 //=================================
 //             Video
@@ -47,6 +48,29 @@ router.post('/uploadfiles', (req, res) => {
                                     // 그 경로를 client에다가 보내주는 것임
         return res.json({success:true, filePath: res.req.file.path, fileName: res.req.file.filename})
     })
+})
+
+router.post('/uploadVideo', (req, res) => {
+    
+    // req.body를 하면 client에서 보낸 variables들이 모두 req.body안에 담겨있음 req.body.writer면 writer정보만
+    const video = new Video(req.body);
+
+    video.save((err, doc) => { 
+        if (err) return res.json({ success: false, err });
+        res.status(200).json({ success: true });
+    })
+})
+
+router.get('/getVideos', (req, res) => {
+    
+    // 비디오를 DB에서 갖고와서 client에 보낸다.
+
+    Video.find()
+        .populate('writer')
+        .exec((err, videos) => {
+            if (err) return res.status(400).send(err);
+            res.status(200).json({success:true, videos})
+        })
 })
 
 module.exports = router;

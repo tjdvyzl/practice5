@@ -43,6 +43,7 @@
     ]
   },
   "devDependencies": {
+    "@ant-design/icons": "^4.0.0",
     "http-proxy-middleware": "^1.0.3"
   }
 }
