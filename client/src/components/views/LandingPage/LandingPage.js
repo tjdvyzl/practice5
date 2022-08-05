@@ -28,7 +28,7 @@ function LandingPage() {
         var seconds = Math.floor((video.duration * 60 - minutes))
 
         return <Col lg={6} md={8} xs={24} key={index}>
-            <a href={`/video/post/${video._id}`}>
+            <a href={`/video/${video._id}`}>
                 <div style={{ position: 'relative' }}>
                     <YoutubeOutlined style={{ width: '200px', height: '200px', fontSize: '200px'}} />
                     <div className='duration'>
