@@ -5,6 +5,7 @@ const path = require('path');
 const { auth } = require("../middleware/auth");
 const multer = require("multer");
 const { Video } = require("../models/Video");
+const { Subscriber } = require("../models/Subscriber");
 
 //=================================
 //             Video
@@ -81,6 +82,38 @@ router.get('/getVideos', (req, res) => {
             if (err) return res.status(400).send(err);
             res.status(200).json({success:true, videos})
         })
+})
+
+
+
+router.post('/getSubscriptionVideos', (req, res) => {
+    
+    Subscriber.find({'userFrom':req.body.userFrom})
+        .exec((err, subscribers) => {
+            if (err) return res.status(400).send(err);
+            
+            let subscriberUser = [];
+
+            subscribers.map((subscriber, index) => {
+                subscriberUser.push(subscriber.userTo);
+            })
+
+            // 원래 전에 하던것 처럼 writer : req.body.id로 할때는 한명만 찾을 때 얘기고
+            // 두명 이상을 찾을 때는 위 방식이 안되기 때문에 몽고DB가 갖고있는 기능을 사용해야한다.
+            // 그때 사용하는 방식이 $in 메소드인데
+            // $in : subscriberUser을 할 경우 subscriberUser 배열에 두명 세명 이상이 있어도
+            // 들어있는 모든 사람들의 id를 가지고 writer들을 찾을 수 있다.
+            // 그리고 populate를 해줘야한다. 왜냐하면 지금 writer의 정보를 갖고싶은데
+            // writer의 id밖에 없기 떄문에 writer의 이미지, 이름, 어떤 다른 데이터를 갖고싶기에 populate를 해줘야한다.
+
+            Video.find({ writer: { $in: subscriberUser } })
+                .populate('writer')
+                .exec((err, videos) => {
+                    if (err) return res.status(400).send(err);
+                    return res.status(200).json({success: true, videos})
+                })
+        })
+    
 })
 
 module.exports = router;

@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react'
 import { Row, Col, List } from 'antd';
 import { Avatar } from 'antd';
 import axios from "axios";
+import SideVideo from './Sections/SideVideo';
+import Subscribe from './Sections/Subscribe';
+import Comment from "./Sections/Comment";
 
 function VideoDetailPage(props) {
 
@@ -25,7 +28,9 @@ function VideoDetailPage(props) {
             })
     }, [])
 
+
     if (VideoDetail.writer) {
+        const subscriberButton = (VideoDetail.writer._id !== localStorage.getItem('userId')) &&<Subscribe userTo={VideoDetail.writer._id} userFrom={localStorage.getItem('userId')} />
         return (
             <Row gutter={[16, 16]}>
                 <Col lg={18} xs={24}>
@@ -33,7 +38,7 @@ function VideoDetailPage(props) {
                         <video style={{ width: '100%' }} src={`https://tjdvyzl-practice5-o79s44t6j0k.ws-us59.gitpod.io/${VideoDetail.filePath}`} controls></video>
                   
                         <List.Item
-                            actions
+                            actions={[subscriberButton]}
                         >
                             <List.Item.Meta
                                 avatar={<Avatar src={VideoDetail.writer.image} />}
@@ -43,10 +48,11 @@ function VideoDetailPage(props) {
                         </List.Item>
 
                         {/* Comments */}
+                        <Comment videoId={videoId} />
                     </div>
                 </Col>
                 <Col lg={6} xs={24}>
-                    Side Videos
+                    <SideVideo/>
                 </Col>
             </Row>
 
