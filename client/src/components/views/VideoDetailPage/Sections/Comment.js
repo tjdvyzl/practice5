@@ -1,6 +1,8 @@
 import Axios from 'axios';
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux';
+import SingleComment from './SingleComment';
+import ReplyComment from "./ReplyComment";
 
 function Comment(props) {
     const user = useSelector(state => state.user);
@@ -26,11 +28,17 @@ function Comment(props) {
                 if (response.data.success)
                 {
                     console.log(response.data.result);   
+
+                    props.refreshFunction(response.data.result);
+
+                    setCommentValue("");
                 }else {
                     alert('fail')
                 }
             })
     }
+
+  console.log(props.commentList);
 
   return (
     <div>
@@ -39,7 +47,16 @@ function Comment(props) {
           <hr/>
 
           {/* Comment Lists */}
-
+      {props.commentList && props.commentList.map((comment, index) => (
+              (!comment.responseTo && 
+                // React에선 jsx를 사용하는데, div나 React.Fragment로 감싸줘야함.
+          <React.Fragment key={index}>
+                    <SingleComment refreshFunction={props.refreshFunction} comment={comment} postId={props.videoId} />
+                    <ReplyComment parentCommentId={comment._id} commentList={props.commentList} />
+                  </React.Fragment>
+                )
+              ))}
+          
           {/* Root Comment Form */}
 
           <form style={{display:'flex'}} onSubmit={onSubmit}>

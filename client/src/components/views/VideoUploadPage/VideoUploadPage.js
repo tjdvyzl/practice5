@@ -1,7 +1,6 @@
 import React, {useState} from 'react'
 import { Typography, Button, Form, message, Input, Icon } from 'antd';
 import Dropzone from 'react-dropzone';
-import Item from 'antd/lib/list/Item';
 import axios from "axios";
 import { useSelector } from 'react-redux';
 const { Title } = Typography;
