@@ -33,20 +33,25 @@ function SingleComment(props) {
       }
 
 
-
-      Axios.post('/api/comment/saveComment', variables)
+      if (user.userData._id) {
+        Axios.post('/api/comment/saveComment', variables)
           .then(response => {
-              if (response.data.success)
-              {
-                  console.log(response.data.result);   
+            if (response.data.success) {
+              console.log(response.data.result);
 
-                  props.refreshFunction(response.data.result);
+              props.refreshFunction(response.data.result);
 
-                  setCommentValue("");
-              }else {
-                  alert('fail')
-              }
+              setCommentValue("");
+
+              setOpenReply(false);
+            } else {
+              alert('fail')
+            }
           })
+      }
+      else {
+        alert('please login')
+      }
     }
 
   const onClickDelete = () => {
@@ -81,13 +86,13 @@ function SingleComment(props) {
         <Comment
           actions={actions}
           author={props.comment.writer.name}
-          avatar={<Avatar src={props.comment.writer.image} alt />}
+          avatar={<Avatar src={props.comment.writer.image} />}
           content={<p>{props.comment.content}</p>}
         />
         {
           openReply &&
           <form style={{ display: 'flex' }} onSubmit={onSubmit}>
-            <textarea
+            <TextArea
               style={{ width: '100%', borderRadius: '5px' }}
               onChange={onChangeHandler}
               value={commentValue}

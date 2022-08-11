@@ -9,10 +9,10 @@ import Comment from "./Sections/Comment";
 function VideoDetailPage(props) {
     const [commentList, setCommentList] = useState([]);
 
-    const videoId = props.match.params.videoId;
+    const postId = props.match.params.postId;
 
     const variables = {
-        videoId: videoId
+        postId: postId
     }
 
     const [VideoDetail, setVideoDetail] = useState([]);
@@ -62,7 +62,7 @@ function VideoDetailPage(props) {
                             </List.Item>
 
                             {/* Comments */}
-                            <Comment  commentList={commentList} videoId={videoId} refreshFunction={updateComment}/>
+                            <Comment  commentList={commentList} postId={postId} refreshFunction={updateComment}/>
                         </div>
                     </Col>
                     <Col lg={6} xs={24}>

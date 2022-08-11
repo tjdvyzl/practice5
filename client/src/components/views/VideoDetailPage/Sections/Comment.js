@@ -38,8 +38,6 @@ function Comment(props) {
             })
     }
 
-  console.log(props.commentList);
-
   return (
     <div>
           <br />
@@ -50,9 +48,9 @@ function Comment(props) {
       {props.commentList && props.commentList.map((comment, index) => (
               (!comment.responseTo && 
                 // React에선 jsx를 사용하는데, div나 React.Fragment로 감싸줘야함.
-          <React.Fragment key={index}>
-                    <SingleComment refreshFunction={props.refreshFunction} comment={comment} postId={props.videoId} />
-                    <ReplyComment parentCommentId={comment._id} commentList={props.commentList} />
+                 <React.Fragment key={index}>
+                    <SingleComment refreshFunction={props.refreshFunction} comment={comment} postId={props.postId} />
+                  <ReplyComment refreshFunction={props.refreshFunction} parentCommentId={comment._id} postId={props.postId} commentList={props.commentList} />
                   </React.Fragment>
                 )
               ))}
