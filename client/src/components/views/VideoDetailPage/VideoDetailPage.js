@@ -5,6 +5,7 @@ import axios from "axios";
 import SideVideo from './Sections/SideVideo';
 import Subscribe from './Sections/Subscribe';
 import Comment from "./Sections/Comment";
+import LikeDisLike from "./Sections/LikeDislike";
 
 function VideoDetailPage(props) {
     const [commentList, setCommentList] = useState([]);
@@ -52,7 +53,7 @@ function VideoDetailPage(props) {
                             <video style={{ width: '100%' }} src={`https://tjdvyzl-practice5-o79s44t6j0k.ws-us59.gitpod.io/${VideoDetail.filePath}`} controls></video>
                     
                             <List.Item
-                                actions={[subscriberButton]}
+                            actions={[<LikeDisLike video userId={localStorage.getItem('userId')} postId={postId} />,subscriberButton]}
                             >
                                 <List.Item.Meta
                                     avatar={<Avatar src={VideoDetail.writer.image} />}
