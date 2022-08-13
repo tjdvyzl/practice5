@@ -44,15 +44,72 @@ router.post("/getDisLikes", (req, res) => {
 })
 
 router.post("/setLike", (req, res) => {
-    const like = new Like(req.body);
+    let variable = {}
+
+    if (req.body.postId) {
+        variable = {postId: req.body.postId, userId: req.body.userId};
+    } else {
+        variable = {commentId: req.body.commentId, userId: req.body.userId}
+    }
+
+    const like = new Like(variable);
+
     like.save((err, doc) => {
         if (err) return res.status(400).json({success:false, err})
-        return res.status(200).json({success:true})
+        Dislike.findOneAndDelete(variable)
+            .exec((err,doc)=> {
+                if (err) return res.status(400).json({ success: false, err })
+                res.status(200).json({ success: true });
+            })
     })
 })
 
 router.post("/unLike", (req, res) => {
-    Like.findOneAndDelete({postId: req.body.postId, userId: req.body.userId})
+    let variable = {}
+
+    if (req.body.postId) {
+        variable = {postId: req.body.postId, userId: req.body.userId};
+    } else {
+        variable = {commentId: req.body.commentId, userId: req.body.userId}
+    }
+
+    Like.findOneAndDelete(variable)
+        .exec((err, doc) => {
+            if (err) return res.status(400).send(err);
+            res.status(200).json({success:true})
+        })
+})
+
+router.post("/setDislike", (req, res) => {
+    let variable = {}
+
+    if (req.body.postId) {
+        variable = {postId: req.body.postId, userId: req.body.userId};
+    } else {
+        variable = {commentId: req.body.commentId, userId: req.body.userId}
+    }
+
+    const dislike = new Dislike(variable);
+    dislike.save((err, dislikeResult) => {
+        if (err) return res.status(400).json({success:false, err})
+        Like.findOneAndDelete(variable)
+            .exec((err, likeResult) => {
+                if (err) return res.status(400).json({ success: false, err })
+                res.status(200).json({ success: true });
+            })
+    })
+})
+
+router.post("/unDislike", (req, res) => {
+    let variable = {}
+
+    if (req.body.postId) {
+        variable = {postId: req.body.postId, userId: req.body.userId};
+    } else {
+        variable = {commentId: req.body.commentId, userId: req.body.userId}
+    }
+
+    Dislike.findOneAndDelete(variable)
         .exec((err, doc) => {
             if (err) return res.status(400).send(err);
             res.status(200).json({success:true})

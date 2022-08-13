@@ -54,43 +54,63 @@ function LikeDislike(props) {
     })
 
     const onClickLike = () => {
-        let variable = {}
+        if (likeAction === null) {
+            Axios.post('/api/like/setLike', variable)
+                .then(response => {
+                    if (response.data.success) {
+                        setLikeAction("liked");
+                        setLikes(likes + 1);
 
-        // comment를 좋아요 눌렀을 때
-        if (props.video) {
-            variable = { postId: props.postId, userId: props.userId }
-            if (likeAction === null) {
-                Axios.post('/api/like/setLike', variable)
-                    .then(response => {
-                        if (response.data.success) {
-                            setLikeAction("liked");
-                            setLikes(likes + 1);
-
-                            if (dislikeAction !== null) {
-                                setDislikes(dislikes - 1);
-                                setDislikeAction(null);
-                            }
-
-                        } else {
-                            alert('like fail');
+                        if (dislikeAction !== null) {
+                            setDislikes(dislikes - 1);
+                            setDislikeAction(null);
                         }
-                    })
-            } else {
-                Axios.post('/api/like/unLike', variable)
-                    .then(response => {
-                        if (response.data.success) {
-                            setLikeAction(null);
-                            setLikes(likes - 1);
-                        } else {
-                            alert('unlike fail')
-                        }
-                    })
-            }
+
+                    } else {
+                        alert('like fail');
+                    }
+                })
+        } else {
+            Axios.post('/api/like/unLike', variable)
+                .then(response => {
+                    if (response.data.success) {
+                        setLikeAction(null);
+                        setLikes(likes - 1);
+                    } else {
+                        alert('unlike fail')
+                    }
+                })
         }
+    
+    }
 
-        // video를 좋아요 눌렀을 때
-        else {
+    const onClickDislike = () => {
+        if (dislikeAction === null) {
+            Axios.post('/api/like/setDislike', variable)
+                .then(response => {
+                    if (response.data.success) {
+                        setDislikeAction("disliked");
+                        setDislikes(dislikes + 1);
 
+                        if (likeAction !== null) {
+                            setLikes(likes - 1);
+                            setLikeAction(null);
+                        }
+
+                    } else {
+                        alert('dislike fail');
+                    }
+                })
+        } else {
+            Axios.post('/api/like/unDislike', variable)
+                .then(response => {
+                    if (response.data.success) {
+                        setDislikeAction(null);
+                        setDislikes(dislikes - 1);
+                    } else {
+                        alert('undislike fail')
+                    }
+                })
         }
     }
 
@@ -103,12 +123,13 @@ function LikeDislike(props) {
                       onClick={onClickLike}
                   />
               </Tooltip>
-              <span style={{ paddingLeft: '8px', cursor: 'auto' }}>{likes}</span>
+              <span style={{ paddingRight: '8px', cursor: 'auto' }}>{likes}</span>
           </span>
           <span key="comment-basic-dislike">
               <Tooltip title="DisLike">
                   <Icon type="dislike"
                       theme={dislikeAction === "disliked" ? "filled" : "outlined"}
+                      onClick={onClickDislike}
                   />
               </Tooltip>
               <span style={{ paddingLeft: '8px', cursor: 'auto' }}>{dislikes}</span>
